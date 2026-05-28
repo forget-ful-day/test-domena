@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>RoboChat — ваш умный ассистент</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #0b0f1c 0%, #0a0e1a 100%);
+            min-height: 100vh;
+            color: #eef2ff;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            flex: 1;
+        }
+
+        /* шапка */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(72, 187, 255, 0.2);
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .tagline {
+            font-size: 0.95rem;
+            color: #9ca3af;
+            background: rgba(255,255,255,0.03);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+        }
+
+        /* главный блок */
+        .hero {
+            text-align: center;
+            margin: 2rem 0 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #94a3f8);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #cbd5e6;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* карточки возможностей */
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.8rem;
+            justify-content: center;
+            margin: 3rem 0;
+        }
+
+        .card {
+            background: rgba(20, 28, 40, 0.6);
+            backdrop-filter: blur(4px);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            width: 280px;
+            border: 1px solid rgba(96, 165, 250, 0.25);
+            transition: all 0.25s ease;
+            text-align: center;
+        }
+
+        .card:hover {
+            border-color: #60a5fa;
+            transform: translateY(-6px);
+            background: rgba(30, 41, 59, 0.7);
+        }
+
+        .card-emoji {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .card p {
+            color: #b9c3d4;
+            font-size: 0.9rem;
+        }
+
+        /* форма связи / демо-чата (простой виджет) */
+        .demo-section {
+            background: rgba(15, 23, 36, 0.7);
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid #2d3a5e;
+            backdrop-filter: blur(4px);
+        }
+
+        .demo-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .chat-preview {
+            background: #0f1422;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            max-width: 500px;
+            margin: 1.5rem auto 0 auto;
+            border: 1px solid #2a3650;
+        }
+
+        .chat-message {
+            background: #1e2a3e;
+            border-radius: 1.5rem;
+            padding: 0.75rem 1rem;
+            margin: 0.75rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+        }
+
+        .chat-message.user {
+            background: #2563eb40;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .chat-message.bot {
+            background: #1e293b;
+            border-left: 3px solid #8b5cf6;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: #0b0f1a;
+            border: 1px solid #334155;
+            border-radius: 2rem;
+            padding: 0.7rem 1rem;
+            color: white;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: #60a5fa;
+        }
+
+        .send-btn {
+            background: #3b82f6;
+            border: none;
+            border-radius: 2rem;
+            padding: 0 1.2rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #2563eb;
+            transform: scale(0.96);
+        }
+
+        .small-note {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 0.8rem;
+            color: #6c7a91;
+        }
+
+        /* футер */
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid #1f2a44;
+            margin-top: 2rem;
+            color: #7c8ba0;
+            font-size: 0.85rem;
+        }
+
+        a {
+            color: #90b4ff;
+            text-decoration: none;
+        }
+
+        @media (max-width: 700px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .container {
+                padding: 1.5rem;
+            }
+            .card {
+                width: 100%;
+                max-width: 320px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="navbar">
+        <div class="logo">🤖 RoboChat</div>
+        <div class="tagline">robochat.qd.je</div>
+    </div>
+
+    <div class="hero">
+        <h1>Умные диалоги <span style="background: none; color:#a78bfa;">⚡</span></h1>
+        <p>RoboChat — лёгкий AI-ассистент, готовый помочь, подсказать или просто поболтать. Доступно 24/7.</p>
+    </div>
+
+    <div class="features">
+        <div class="card">
+            <div class="card-emoji">🧠</div>
+            <h3>Быстрые ответы</h3>
+            <p>Мгновенная реакция на любые вопросы. База знаний и здравый смысл.</p>
+        </div>
+        <div class="card">
+            <div class="card-emoji">🔒</div>
+            <h3>Приватно</h3>
+            <p>Никаких логов. Ваши диалоги не сохраняются надолго — только помощь здесь и сейчас.</p>
+        </div>
+        <div class="card">
+            <div class="card-emoji">🌍</div>
+            <h3>Доступность</h3>
+            <p>Работает откуда угодно: с телефона, планшета или ноутбука — просто откройте сайт.</p>
+        </div>
+    </div>
+
+    <!-- интерактивный демо-чат (имитация простого ответа) -->
+    <div class="demo-section">
+        <div class="demo-title">
+            💬 Попробуйте RoboChat 
+            <span style="font-size: 0.9rem; background: #1e293b; padding: 0.2rem 0.8rem; border-radius: 60px;">демо</span>
+        </div>
+        <div class="chat-preview" id="chatContainer">
+            <div class="chat-message bot">
+                <span>🤖</span>
+                <span>Привет! Я RoboChat. Спроси меня о погоде, идеях для кода или просто поздоровайся 😊</span>
+            </div>
+            <div class="chat-message user">
+                <span>👤</span>
+                <span>Как дела, RoboChat?</span>
+            </div>
+            <div class="chat-message bot">
+                <span>🤖</span>
+                <span>Отлично! Готов общаться и помогать. А у тебя как?</span>
+            </div>
+        </div>
+        <div style="max-width: 500px; margin: 0 auto;">
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Напишите что-нибудь..." autocomplete="off">
+                <button id="sendButton" class="send-btn">➤</button>
+            </div>
+            <div class="small-note">
+                ⚡ Демо-режим — робот отвечает короткими фразами. Полную версию можно развернуть на любом бэкенде.
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin: 1rem 0 0.5rem 0;">
+        <p style="color:#b9c3d4;">✨ Интеграция с AI API | Готов к масштабированию ✨</p>
+    </div>
+</div>
+
+<div class="footer">
+    © 2025 RoboChat • Работает на <strong>robochat.qd.je</strong> • Бесплатный домен с DigitalPlat 
+    <br> <span style="font-size:0.75rem;">🚀 Сделано для демонстрации возможностей вашего домена</span>
+</div>
+
+<script>
+    // простая логика чата — имитация умного помощника
+    const chatContainer = document.getElementById('chatContainer');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendButton');
+
+    // добавляем сообщение в интерфейс
+    function addMessage(sender, text, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'}`;
+        const iconSpan = document.createElement('span');
+        iconSpan.textContent = isUser ? '👤' : '🤖';
+        const textSpan = document.createElement('span');
+        textSpan.textContent = text;
+        messageDiv.appendChild(iconSpan);
+        messageDiv.appendChild(textSpan);
+        chatContainer.appendChild(messageDiv);
+        // автоматическая прокрутка вниз
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // простая "нейросетевая" заглушка, но с симпатичными ответами
+    function getBotReply(userMessage) {
+        const msg = userMessage.toLowerCase().trim();
+        if (msg.includes('привет') || msg.includes('здравствуй') || msg.includes('hello') || msg === 'hi') {
+            return 'Привет-привет! Рад поболтать 🤗 Какой у тебя вопрос?';
+        }
+        if (msg.includes('как дела') || msg.includes('как ты') || msg.includes('how are you')) {
+            return 'У меня всё отлично! Коды не болеют, а тебе желаю хорошего настроения 😎';
+        }
+        if (msg.includes('погода') || msg.includes('дождь') || msg.includes('солнце')) {
+            return 'Погоду лучше смотреть в метеосервисах, но, знаешь, говорят, сегодня будет ясный код ☀️👨‍💻';
+        }
+        if (msg.includes('спасибо') || msg.includes('thank')) {
+            return 'Всегда пожалуйста! Обращайся 🤝';
+        }
+        if (msg.includes('кто ты') || msg.includes('ты кто')) {
+            return 'Я RoboChat — твой виртуальный собеседник. Работаю на домене robochat.qd.je!';
+        }
+        if (msg.includes('помощь') || msg.includes('что ты умеешь')) {
+            return 'Умею отвечать на вопросы, поддерживать диалог и давать идеи. Просто спроси что-нибудь!';
+        }
+        if (msg.includes('имя') || msg.includes('как тебя зовут')) {
+            return 'Меня зовут RoboChat, приятно познакомиться!';
+        }
+        // дефолтный ответ с оттенком "умного ассистента"
+        const funnyReplies = [
+            'Интересный вопрос... 🤔 Дай-ка подумать. А ты что сам думаешь?',
+            'Заметано! Я бы на твоём месте поискал документацию, но если хочешь — обсудим 🚀',
+            'Хм, я пока учусь на твоих вопросах. Расскажи подробнее!',
+            'Честно? Как демо-бот я ещё не всё знаю, но давай помечтаем, какую фичу тут сделать следующей ✨'
+        ];
+        return funnyReplies[Math.floor(Math.random() * funnyReplies.length)];
+    }
+
+    function sendMessage() {
+        const userText = chatInput.value.trim();
+        if (userText === '') return;
+
+        // добавим сообщение пользователя
+        addMessage('Вы', userText, true);
+        chatInput.value = '';
+
+        // маленькая задержка для имитации "печатания"
+        setTimeout(() => {
+            const reply = getBotReply(userText);
+            addMessage('RoboChat', reply, false);
+        }, 400);
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+
+    // приветствие при загрузке (добавим ещё одно через секунду, но чтобы не дублировать)
+    setTimeout(() => {
+        // очистка не нужна, просто оставим атмосферу
+        const lastBot = chatContainer.lastChild;
+        if (lastBot && lastBot.innerText.includes('А у тебя как?')) {
+            // ничего, просто оставим уже красивый диалог
+        } else {
+            // если нужно что-то добавить, но в целом на старте уже есть три сообщения, ок
+        }
+    }, 100);
+</script>
+</body>
+</html>
